@@ -5003,11 +5003,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/bhampton/git/dotnet/Learning-Dotnet/api/api.csproj",
+      "projectUniqueName": "/Users/bhampton/git/dotnet/learning-dotnet/api/api.csproj",
       "projectName": "api",
-      "projectPath": "/Users/bhampton/git/dotnet/Learning-Dotnet/api/api.csproj",
+      "projectPath": "/Users/bhampton/git/dotnet/learning-dotnet/api/api.csproj",
       "packagesPath": "/Users/bhampton/.nuget/packages/",
-      "outputPath": "/Users/bhampton/git/dotnet/Learning-Dotnet/api/obj/",
+      "outputPath": "/Users/bhampton/git/dotnet/learning-dotnet/api/obj/",
       "projectStyle": "PackageReference",
       "UsingMicrosoftNETSdk": false,
       "configFilePaths": [
