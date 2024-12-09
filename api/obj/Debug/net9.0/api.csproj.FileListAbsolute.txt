@@ -292,3 +292,5 @@
 /Users/bhampton/git/dotnet/Learning-Dotnet/api/obj/Debug/net9.0/api.pdb
 /Users/bhampton/git/dotnet/Learning-Dotnet/api/obj/Debug/net9.0/api.genruntimeconfig.cache
 /Users/bhampton/git/dotnet/Learning-Dotnet/api/obj/Debug/net9.0/ref/api.dll
+/Users/bhampton/git/dotnet/learning-dotnet/api/obj/Debug/net9.0/api.sourcelink.json
+/Users/bhampton/git/dotnet/learning-dotnet/api/bin/Debug/net9.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll

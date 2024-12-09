@@ -29,7 +29,7 @@ public class CommentController: ControllerBase
         return Ok(commentDto);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult> FindById(int id)
     {
         var comment = await _commentRepository.FindByIdAsync(id);
@@ -45,6 +45,12 @@ public class CommentController: ControllerBase
     [HttpPost]
     public async Task<ActionResult> Post([FromBody] RequestCommentDto requestCommentDto)
     {
+        
+        if (!ModelState.IsValid) //comes from base controller
+        {
+            return BadRequest(ModelState);
+        }
+        
         var comment = requestCommentDto.ToComment();
         
         await _commentRepository.CreateAsync(comment);
@@ -53,14 +59,19 @@ public class CommentController: ControllerBase
     }
 
     [HttpPut]
-    [Route("{id}")]
+    [Route("{id:int}")]
     public async Task<ActionResult> Update(int id, [FromBody] RequestCommentDto rquestCommentDto)
     {
+        if (!ModelState.IsValid) //comes from base controller
+        {
+            return BadRequest(ModelState);
+        }
+        
         var comment = await _commentRepository.UpdateAsync(id, rquestCommentDto.ToComment());
         return Ok(comment);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteById([FromRoute] int id)
     {
         var comment = await _commentRepository.DeleteByIdAsync(id);

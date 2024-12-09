@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.Dto;
 using api.Dto.stock;
+using api.Helpers;
 using api.Interface;
 using api.Mapper;
 using api.Model;
@@ -35,11 +36,24 @@ namespace api.Controller
          
             var stockDto = stocks.Select(stock => stock.ToDto());
             
+            return Ok(stockDto);
+        }
+        
+        //pageable & queryable
+        [HttpGet("queryable")]
+        public async Task<IActionResult> FindByQuery([FromQuery] QueryObject query)
+        {
+            //todo deferred execution
+            var stocks = await _stockRepository.FindAllByQueryAsync(query);
+         
+            var stockDto = stocks.Select(stock => stock.ToDto());
+            
             return Ok(stocks);
         }
         
+        //todo route constraints
         //todo model binding
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> FindById([FromRoute] int Id)
         {
             //todo deferred execution
@@ -56,6 +70,12 @@ namespace api.Controller
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] RequestStockDto requestStockDto)
         {
+            
+            if (!ModelState.IsValid) //comes from base controller
+            {
+                return BadRequest(ModelState);
+            }
+            
             var stock = requestStockDto.ToStockFromDto();
             
             await _stockRepository.CreateAsync(stock);
@@ -64,9 +84,15 @@ namespace api.Controller
         }
         
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] RequestStockDto requestStockDto)
         {
+            
+            if (!ModelState.IsValid) //comes from base controller
+            {
+                return BadRequest(ModelState);
+            }
+            
             var stock = await _stockRepository.UpdateAsync(id, requestStockDto.ToStockFromDto());
 
             if (stock == null)
@@ -77,7 +103,7 @@ namespace api.Controller
             return Ok(stock.ToDto());
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteById([FromRoute] int id)
         {
             var stock = await _stockRepository.DeleteByIdAsync(id);
@@ -89,15 +115,5 @@ namespace api.Controller
             
             return NoContent();
         }
-
-        
-        // //todo read about defered execution
-        // [HttpGet]
-        // public async Task<IActionResult> GetAll() 
-        // {
-        //     var user = await _stockService.TestServiceMethod(1);
-        //
-        //     return Ok(user);
-        // }
     }
 }

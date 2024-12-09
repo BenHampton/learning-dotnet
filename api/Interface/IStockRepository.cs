@@ -1,4 +1,5 @@
 using api.Dto;
+using api.Helpers;
 using api.Model;
 
 namespace api.Interface;
@@ -6,6 +7,8 @@ namespace api.Interface;
 public interface IStockRepository
 {
     Task<List<Stock>> FindAllAsync();
+    
+    Task<List<Stock>> FindAllByQueryAsync(QueryObject query);
     
     Task<Stock?> FindByIdAsync(int id);
     
