@@ -1,7 +1,5 @@
 using api.Dto.Register;
 using api.Interface;
-using api.Model;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controller;
@@ -10,15 +8,30 @@ namespace api.Controller;
 [ApiController]
 public class AccountController : ControllerBase
 {
-
-    private readonly UserManager<AppUser> _userManager;
     
-    private readonly ITokenService _tokenService;
+    private readonly IAccountService _accountService;
 
-    public AccountController(UserManager<AppUser> userManager, ITokenService tokenService)
+    public AccountController(IAccountService accountService)
     {
-        _userManager = userManager;
-        _tokenService = tokenService;
+        _accountService = accountService;
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginDto loginDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var user = await _accountService.FindLoginUser(loginDto);
+        
+        if (user == null)
+        {
+            return Unauthorized("Invalid username and/or password");
+        }
+        
+        return Ok(user);
     }
 
     [HttpPost("register")]
@@ -31,32 +44,14 @@ public class AccountController : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var appUser = new AppUser
-            {
-                UserName = registerDto.Username,
-                Email = registerDto.Email,
-            };
-            
-            var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
+            var user = await _accountService.RegisterUser(registerDto);
 
-            if (createdUser.Succeeded)
+            if (user == null)
             {
-                var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
-                if (roleResult.Succeeded)
-                {
-                    return Ok(
-                        new UserDto
-                        {
-                            Username = appUser.UserName,
-                            Email = appUser.Email,
-                            Token = _tokenService.CreateToken(appUser)
-                        });
-                }
-                
-                return StatusCode(500);
+                StatusCode(500);
             }
 
-            return StatusCode(500, createdUser.Errors);
+            return Ok(user);
         }
         catch (Exception e)
         {

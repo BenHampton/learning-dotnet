@@ -24,7 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 
-builder.Services.AddHttpClient<StockService>((serviceProvider, client) => {
+builder.Services.AddHttpClient<TestService>((serviceProvider, client) => {
 
     // var settings = serviceProvider
     // .GetRequiredService<IOptions<MovieServiceSettings>>().Value;
@@ -77,6 +77,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 var app = builder.Build();
 

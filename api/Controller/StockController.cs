@@ -22,33 +22,37 @@ namespace api.Controller
     public class StockController: ControllerBase
     {
         private readonly IStockRepository _stockRepository;
+        
+        private readonly IStockService _stockService;
 
-        public StockController(IStockRepository stockRepository)
+        public StockController(IStockRepository stockRepository, IStockService stockService)
         {
             _stockRepository = stockRepository;
+            _stockService = stockService;
         }
         
         [HttpGet]
         public async Task<IActionResult> FindAll()
         {
-            //todo deferred execution
-            var stocks = await _stockRepository.FindAllAsync();
-         
-            var stockDto = stocks.Select(stock => stock.ToDto());
             
-            return Ok(stockDto);
+            var stocks = await _stockService.FindAllAsync();
+            
+            return Ok(stocks);
         }
         
         //pageable & queryable
         [HttpGet("queryable")]
         public async Task<IActionResult> FindByQuery([FromQuery] QueryObject query)
         {
-            //todo deferred execution
-            var stocks = await _stockRepository.FindAllByQueryAsync(query);
-         
-            var stockDto = stocks.Select(stock => stock.ToDto());
-            
-            return Ok(stocks);
+            // //todo deferred execution
+            // var stocks = await _stockRepository.FindAllByQueryAsync(query);
+            //
+            // var stockDto = stocks.Select(stock => stock.ToDto());
+            //
+            // return Ok(stocks);
+
+            var stocks = await _stockService.FindAllByQueryAsync(query);
+            return Ok();
         }
         
         //todo route constraints
@@ -56,15 +60,10 @@ namespace api.Controller
         [HttpGet("{id:int}")]
         public async Task<IActionResult> FindById([FromRoute] int Id)
         {
-            //todo deferred execution
-            var stock = await _stockRepository.FindByIdAsync(Id);
-
-            if (stock == null)
-            {
-                return NotFound(Id);
-            }
             
-            return Ok(stock.ToDto());
+            var stock = await _stockService.FindByIdAsync(Id);
+            
+            return stock == null ? NotFound(Id) : Ok(stock);
         }
 
         [HttpPost]
@@ -93,27 +92,18 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
             
-            var stock = await _stockRepository.UpdateAsync(id, requestStockDto.ToStockFromDto());
-
-            if (stock == null)
-            {
-                return NotFound(id);
-            }
+            var stock = await _stockService.FindByIdAsync(id);
             
-            return Ok(stock.ToDto());
+            return stock == null ? NotFound(id) : Ok(stock);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteById([FromRoute] int id)
         {
-            var stock = await _stockRepository.DeleteByIdAsync(id);
             
-            if (stock == null)
-            {
-                return NotFound(id);
-            }
+            var stock = await _stockService.DeleteByIdAsync(id);
             
-            return NoContent();
+            return stock == null ? NotFound(id) : NoContent();
         }
     }
 }
